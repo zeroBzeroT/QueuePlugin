@@ -1,0 +1,4 @@
+name: QueuePlugin
+version: ${project.version}
+main: org.cloudanarchy.queueplugin.QueuePlugin
+api-version: 1.13
