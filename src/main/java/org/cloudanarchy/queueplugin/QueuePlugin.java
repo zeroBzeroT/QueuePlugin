@@ -8,10 +8,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -39,25 +36,15 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
         Bukkit.getScheduler().runTaskTimer(this, new Tablist(this), 0, 10L);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-
-
             haspapi = true;
-
         }
-
         starttime = System.currentTimeMillis();
-
         getServer().getPluginManager().registerEvents(this, this);
-
-
-
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
             playerQuitEvent.setQuitMessage("");
-
-
     }
 
 
@@ -65,18 +52,18 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
 
-        for (World world : getServer().getWorlds()) {
-
-            System.out.println(world.getName());
-
-        }
-
         e.getPlayer().teleport(new Location(getServer().getWorld("world_nether"), 0, 140, 0));
         e.getPlayer().setAllowFlight(true);
         e.getPlayer().setFlying(true);
         e.getPlayer().setGameMode(GameMode.SPECTATOR);
-        vanish(e.getPlayer());
+        for(Player player : Bukkit.getOnlinePlayers()){
+            vanish(player);
+        }
         e.setJoinMessage("");
+    }
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e){
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -94,14 +81,10 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
 
     }
 
-
-
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic
     }
-
 
     public static String parseText(Player player, String text) throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String newtext = text;
@@ -123,7 +106,7 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
         newtext = ChatColor.translateAlternateColorCodes('&', newtext);
 
         newtext = newtext
-             .replaceAll("<players>", Integer.toString(Bukkit.getServer().getOnlinePlayers().size()));
+             .replaceAll("<>", Integer.toString(Bukkit.getServer().getOnlinePlayers().size()));
 
         return newtext;
     }
