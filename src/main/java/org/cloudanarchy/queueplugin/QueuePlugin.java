@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -22,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public final class QueuePlugin extends JavaPlugin implements Listener{
 
@@ -41,6 +43,8 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
         starttime = System.currentTimeMillis();
         getServer().getPluginManager().registerEvents(this, this);
     }
+
+
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
@@ -68,10 +72,19 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
-
         e.setCancelled(true);
-
     }
+
+
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent e){
+        e.setCancelled(true);
+    }
+
+
+    @EventHandler
+    public void onAchievement(PlayerAchievementAwardedEvent e){ e.setCancelled(true); }
+
 
 
     @EventHandler
@@ -83,6 +96,8 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
 
     @Override
     public void onDisable() {
+
+        this.saveDefaultConfig();
         // Plugin shutdown logic
     }
 

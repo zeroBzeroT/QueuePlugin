@@ -1,18 +1,12 @@
 tablist:
   header:
     - ""
-    - "&b&lCLOUDANARCHY.ORG"
+    - "&a&l0b&c&l0t&9&l.org"
     - ""
-    - "&b&lIs Currently Full"
-    - ""
-    - "There are <> in Queue "
+    - "&6Is Currently Full"
+    - "&6There are &l<>&r&6 in Queue "
     - ""
   footer:
     - ""
-    - "&7Contact: cloudanarchy@hackermail.com"
-    - "&7Discussion: reddit.com/r/cloudanarchy/"
-    - "&7Discord: http://discord.cloudanarchy.org"
-    - "&7Donate: https://paypal.me/Krazzzzymonkey"
-    - "&7Website: cloudanarchy.org (currently down)"
+    - "&6You can donate to receive priority queue status, visit donate.0b0t.org"
     - ""
-    - "&7These are the only official cloud anarchy websites and contacts."
