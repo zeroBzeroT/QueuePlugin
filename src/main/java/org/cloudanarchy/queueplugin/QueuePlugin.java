@@ -19,6 +19,7 @@ import org.cloudanarchy.queueplugin.util.ReflectionUtils;
 import org.cloudanarchy.queueplugin.util.TabUtil;
 import org.cloudanarchy.queueplugin.util.Tablist;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -34,6 +35,9 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
 
     @Override
     public void onEnable() {
+        // config
+        saveDefaultConfig();
+
         // Plugin startup logic
         Bukkit.getScheduler().runTaskTimer(this, new Tablist(this), 0, 10L);
 
@@ -44,7 +48,10 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-
+    public void saveDefaultConfig() {
+        if (!new File(getDataFolder(), "config.yml").exists())
+            saveResource("config.yml", false);
+    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
