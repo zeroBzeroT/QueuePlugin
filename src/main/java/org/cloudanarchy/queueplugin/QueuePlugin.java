@@ -1,6 +1,7 @@
 package org.cloudanarchy.queueplugin;
 
 
+import com.comphenix.protocol.ProtocolLibrary;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.minecraft.server.v1_12_R1.Packet;
 import org.bukkit.*;
@@ -30,13 +31,17 @@ public final class QueuePlugin extends JavaPlugin implements Listener{
 
     public static boolean haspapi = false;
 
-
     public static long starttime;
 
     @Override
     public void onEnable() {
         // config
         saveDefaultConfig();
+
+        // Hide advancements
+        for (World world : Bukkit.getWorlds()) {
+            world.setGameRuleValue("announceAdvancements", "false");
+        }
 
         // Plugin startup logic
         Bukkit.getScheduler().runTaskTimer(this, new Tablist(this), 0, 10L);
