@@ -18,19 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 public final class QueuePlugin extends JavaPlugin implements Listener {
 
-    private static QueuePlugin instance;
-
-    public static QueuePlugin getInstance() {
-        return instance;
-    }
-
-    @Override
-    public void onLoad() {
-        if (instance == null) {
-            instance = this;
-        }
-    }
-
     private void process(@NotNull Player player) {
         player.teleport(new Location(getServer().getWorlds().get(0), 0, 140, 0));
         player.setAllowFlight(true);

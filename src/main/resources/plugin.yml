@@ -2,4 +2,4 @@ name: ${project.name}
 version: ${project.version}
 main: org.cloudanarchy.queueplugin.QueuePlugin
 api-version: 1.13
-depend: [ ProtocolLib, PlaceholderAPI ]
+depend: [ ProtocolLib ]
