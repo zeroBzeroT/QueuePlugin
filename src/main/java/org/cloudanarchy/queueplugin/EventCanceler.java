@@ -40,6 +40,26 @@ public class EventCanceler extends PacketAdapter implements Listener {
     public void onPacketSending(PacketEvent ev) {
         if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
         if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
+        if (ev.getPacketType() == PacketType.Play.Server.MAP_CHUNK) return;
+        if (ev.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.MULTI_BLOCK_CHANGE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.LIGHT_UPDATE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
+        if (ev.getPacketType() == PacketType.Play.Server.SERVER_DIFFICULTY) return;
+        if (ev.getPacketType() == PacketType.Play.Server.ABILITIES) return;
+        if (ev.getPacketType() == PacketType.Play.Server.HELD_ITEM_SLOT) return;
+        if (ev.getPacketType() == PacketType.Play.Server.RECIPE_UPDATE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.RECIPES) return;
+        if (ev.getPacketType() == PacketType.Play.Server.COMMANDS) return;
+        if (ev.getPacketType() == PacketType.Play.Server.TAGS) return;
+        if (ev.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) return;
+        if (ev.getPacketType() == PacketType.Play.Server.CUSTOM_PAYLOAD) return;
+        if (ev.getPacketType() == PacketType.Play.Server.POSITION) return;
+        if (ev.getPacketType() == PacketType.Play.Server.SPAWN_POSITION) return;
+        if (ev.getPacketType() == PacketType.Play.Server.GAME_STATE_CHANGE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) return;
+        if (ev.getPacketType() == PacketType.Play.Server.VIEW_CENTRE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) return;
         ev.setCancelled(true);
     }
 
