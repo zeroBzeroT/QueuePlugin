@@ -40,10 +40,6 @@ public class EventCanceler extends PacketAdapter implements Listener {
     public void onPacketSending(PacketEvent ev) {
         if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
         if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
-        if (ev.getPacketType() == PacketType.Play.Server.MAP_CHUNK) return;
-        if (ev.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) return;
-        if (ev.getPacketType() == PacketType.Play.Server.MULTI_BLOCK_CHANGE) return;
-        if (ev.getPacketType() == PacketType.Play.Server.LIGHT_UPDATE) return;
         if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
         if (ev.getPacketType() == PacketType.Play.Server.SERVER_DIFFICULTY) return;
         if (ev.getPacketType() == PacketType.Play.Server.ABILITIES) return;
