@@ -38,12 +38,12 @@ public class EventCanceler extends PacketAdapter implements Listener {
 
     @Override
     public void onPacketSending(PacketEvent ev) {
-        if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
-        if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
-        if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
-        if (ev.getPacketType() == PacketType.Play.Server.POSITION) return; // this is needed or client will not join
-        //if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) return; // if we dont send this, player has default skin lol
         if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) return;
+        if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.POSITION) return; // this is needed or client will not join
+        if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
+        if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
+        //if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) return; // if we dont send this, player has default skin lol
         ev.setCancelled(true);
     }
 
