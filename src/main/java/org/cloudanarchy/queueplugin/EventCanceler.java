@@ -6,12 +6,10 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.cloudanarchy.queueplugin.packets.PacketS2CUpdateTime;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,9 +36,22 @@ public class EventCanceler extends PacketAdapter implements Listener {
 
     @Override
     public void onPacketSending(PacketEvent ev) {
+        // these are needed or a notchian client will not join
         if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
+        if (ev.getPacketType() == PacketType.Play.Server.POSITION) return;
+        if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
         if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
+
+        // if we dont send this, player has default skin lol
+        if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) return;
+
         ev.setCancelled(true);
+
+        if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) {
+            PacketS2CUpdateTime p = new PacketS2CUpdateTime(ev.getPacket());
+            p.setAgeOfTheWorld(p.getAgeOfTheWorld() - 420);
+            p.sendPacket(ev.getPlayer());
+        }
     }
 
     @EventHandler
@@ -50,22 +61,7 @@ public class EventCanceler extends PacketAdapter implements Listener {
     }
 
     @EventHandler
-    public void onBlockPhysics(BlockPhysicsEvent ev) {
-        ev.setCancelled(true);
-    }
-
-    @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent ev) {
-        ev.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onPlayerAttemptPickupItem(PlayerAttemptPickupItemEvent ev) {
-        ev.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onRaidTrigger(RaidTriggerEvent ev) {
         ev.setCancelled(true);
     }
 
