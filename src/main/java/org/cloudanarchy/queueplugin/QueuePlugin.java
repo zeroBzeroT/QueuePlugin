@@ -39,6 +39,7 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
         for (Player p : getServer().getOnlinePlayers()) {
             if (player.equals(p)) continue;
             player.hidePlayer(this, p);
+            p.hidePlayer(this, player);
         }
     }
 
