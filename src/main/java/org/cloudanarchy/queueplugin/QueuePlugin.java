@@ -1,172 +1,191 @@
 package org.cloudanarchy.queueplugin;
 
 
-import com.comphenix.protocol.ProtocolLibrary;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.minecraft.server.v1_12_R1.Packet;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.cloudanarchy.queueplugin.util.ReflectionUtils;
-import org.cloudanarchy.queueplugin.util.TabUtil;
-import org.cloudanarchy.queueplugin.util.Tablist;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.logging.Logger;
+public final class QueuePlugin extends JavaPlugin implements Listener {
 
-public final class QueuePlugin extends JavaPlugin implements Listener{
-
-    public static boolean haspapi = false;
-
-    public static long starttime;
+    private void process(@NotNull Player player) {
+        player.teleport(new Location(getServer().getWorlds().get(0), 0, 140, 0));
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.setGameMode(GameMode.SPECTATOR);
+        for (Player p : getServer().getOnlinePlayers()) {
+            if (player.equals(p)) continue;
+            player.hidePlayer(this, p);
+        }
+    }
 
     @Override
     public void onEnable() {
-        // config
-        saveDefaultConfig();
-
-        // Hide advancements
-        for (World world : Bukkit.getWorlds()) {
-            world.setGameRuleValue("announceAdvancements", "false");
-        }
-
-        // Plugin startup logic
-        Bukkit.getScheduler().runTaskTimer(this, new Tablist(this), 0, 10L);
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            haspapi = true;
-        }
-        starttime = System.currentTimeMillis();
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    public void saveDefaultConfig() {
-        if (!new File(getDataFolder(), "config.yml").exists())
-            saveResource("config.yml", false);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
-            playerQuitEvent.setQuitMessage("");
-    }
-
-
-
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-
-        e.getPlayer().teleport(new Location(getServer().getWorld("world_nether"), 0, 140, 0));
-        e.getPlayer().setAllowFlight(true);
-        e.getPlayer().setFlying(true);
-        e.getPlayer().setGameMode(GameMode.SPECTATOR);
-        for(Player player : Bukkit.getOnlinePlayers()){
-            vanish(player);
-        }
-        e.setJoinMessage("");
-    }
-    @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent e){
-        e.setCancelled(true);
+    public void onPlayerJoin(PlayerJoinEvent ev) {
+        ev.joinMessage(Component.empty());
+        process(ev.getPlayer());
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e){
-        e.setCancelled(true);
-    }
-
-
-    @EventHandler
-    public void onTabComplete(TabCompleteEvent e){
-        e.setCancelled(true);
-    }
-
-
-    @EventHandler
-    public void onAchievement(PlayerAchievementAwardedEvent e){ e.setCancelled(true); }
-
-
-
-    @EventHandler
-    public void onChatSend(AsyncPlayerChatEvent e){
-
-        e.setCancelled(true);
-
-    }
-
-    @Override
-    public void onDisable() {
-
-        this.saveDefaultConfig();
-        // Plugin shutdown logic
-    }
-
-    public static String parseText(Player player, String text) throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String newtext = text;
-        Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
-        int ping = (Integer) entityPlayer.getClass().getField("ping").get(entityPlayer);
-        String playerPing;
-
-        if (ping > 200) {
-            playerPing = "§6" + ping;
-        }
-        if (ping > 300) {
-            playerPing = "§c" + ping;
-        } else playerPing = "§a" + ping;
-
-        if (haspapi) {
-            newtext = PlaceholderAPI.setPlaceholders(player, text);
-        }
-
-        newtext = ChatColor.translateAlternateColorCodes('&', newtext);
-
-        newtext = newtext
-             .replaceAll("<>", Integer.toString(Bukkit.getServer().getOnlinePlayers().size()));
-
-        return newtext;
-    }
-
-
-    public static double getTPS() {
-        double tps = 0.0;
-        try {
-            Object mc = ReflectionUtils.invokeMethod((Object) Bukkit.getServer(), "getServer", false);
-            Field rec = ReflectionUtils.getField(mc, "recentTps", false);
-            double[] recentTps = (double[]) rec.get(mc);
-            tps = recentTps[0];
-        } catch (Throwable throwable) {
-            // empty catch block
-        }
-        return tps;
-    }
-
-    private void vanish(Player player) {
-        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
-            if (!onlinePlayer.equals(player)) {
-                onlinePlayer.hidePlayer(this, player);
+    public void onPlayerRespawn(PlayerRespawnEvent ev) {
+        ev.setRespawnLocation(new Location(getServer().getWorlds().get(0), 0, 140, 0));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                process(ev.getPlayer());
             }
-        }
+        }.runTaskLater(this, 1);
     }
 
-    public void unvanish(Player player) {
-        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
-            if (!onlinePlayer.equals(player)) {
-                onlinePlayer.showPlayer(this, player);
-            }
-        }
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent ev) {
+        ev.quitMessage(Component.empty());
     }
 
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPhysics(BlockPhysicsEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent ev) {
+        if (ev.getEntityType() == EntityType.PLAYER) return;
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryInteract(InventoryInteractEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryMoveItem(InventoryMoveItemEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent ev) {
+        ev.message(Component.empty());
+    }
+
+    @EventHandler
+    public void onPlayerAnimation(PlayerAnimationEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerAttemptPickupItem(PlayerAttemptPickupItemEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerHarvestBlock(PlayerHarvestBlockEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerItemHeld(PlayerItemHeldEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerPortal(PlayerPortalEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerStatisticIncrement(PlayerStatisticIncrementEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerToggleSprint(PlayerToggleSprintEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerVelocity(PlayerVelocityEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onRaidTrigger(RaidTriggerEvent ev) {
+        ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent ev) {
+        ev.setCancelled(true);
+    }
 
 }
