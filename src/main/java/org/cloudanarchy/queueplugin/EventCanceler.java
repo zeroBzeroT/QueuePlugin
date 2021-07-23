@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.cloudanarchy.queueplugin.packets.PacketS2CUpdateTime;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,16 +41,16 @@ public class EventCanceler extends PacketAdapter implements Listener {
         if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
         if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
 
+        // this keeps the player from falling (flying ability)
+        if (ev.getPacketType() == PacketType.Play.Server.ABILITIES) return;
+
         // if we dont send this, player has default skin lol
         if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) return;
 
-        ev.setCancelled(true);
+        // this keeps hacked clients from showing server as lagging
+        if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) return;
 
-        if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) {
-            PacketS2CUpdateTime p = new PacketS2CUpdateTime(ev.getPacket());
-            p.setAgeOfTheWorld(p.getAgeOfTheWorld() - 420);
-            p.sendPacket(ev.getPlayer());
-        }
+        ev.setCancelled(true);
     }
 
     @EventHandler
