@@ -14,19 +14,31 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.cloudanarchy.queueplugin.packetwrapper.PacketGameState;
 import org.jetbrains.annotations.NotNull;
 
 public final class QueuePlugin extends JavaPlugin implements Listener {
+
+    private static final PacketGameState creditScreenPacket = PacketGameState.creditScreenPacket();
 
     private void process(@NotNull Player player) {
         player.teleport(new Location(getServer().getWorlds().get(0), 0, 140, 0));
         player.setAllowFlight(true);
         player.setFlying(true);
+        player.setInvisible(true);
+        player.setInvulnerable(true);
         player.setGameMode(GameMode.SPECTATOR);
         for (Player p : getServer().getOnlinePlayers()) {
             if (player.equals(p)) continue;
             player.hidePlayer(this, p);
             p.hidePlayer(this, player);
+        }
+        // win blockgame while some other players are in queue
+        if (getServer().getOnlinePlayers().size() < 4) return;
+        try {
+            creditScreenPacket.sendPacket(player);
+        } catch (RuntimeException ex) {
+            getLogger().warning("Unable to send fake packet: " + ex.getMessage());
         }
     }
 
