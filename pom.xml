@@ -105,7 +105,6 @@
                     <argument>server.jar</argument>
                     <argument>--copy-plugins</argument>
                     <argument>target/${project.artifactId}-*.jar</argument>
-                    <argument>plugin-dependencies/PlaceholderAPI-*.jar</argument>
                     <argument>plugin-dependencies/ProtocolLib-*.jar</argument>
                   </arguments>
                   <environmentVariables>
