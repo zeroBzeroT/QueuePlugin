@@ -55,7 +55,7 @@ public class EventCanceler extends PacketAdapter implements Listener {
         // if we dont send this, player has default skin lol
         if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
             PacketPlayerInfo packet = new PacketPlayerInfo(ev.getPacket());
-            // send players only their own data? or dont send this packet at all...
+            // send players only their own data? or don't send this packet at all...
             if (packet.getData() != null)
                 packet.setData(packet.getData().stream().filter(data -> data.getProfile().getUUID().equals(ev.getPlayer().getUniqueId())).collect(Collectors.toList()));
             return;
