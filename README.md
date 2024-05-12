@@ -19,4 +19,4 @@ Plugin for **Paper Minecraft Servers** to provide a static world for queue serve
 
 ## Tested Minecraft Versions
 
-- 1.12.2
+- 1.20.4
