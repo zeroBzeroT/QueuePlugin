@@ -62,13 +62,6 @@ public class EventCanceler extends PacketAdapter implements Listener {
             return;
         }
 
-        // this is for fun
-        if (ev.getPacketType() == PacketType.Play.Server.GAME_STATE_CHANGE) {
-            PacketGameState packet = new PacketGameState(ev.getPacket());
-            // allow credit screen
-            if (packet.getReason() == 4 && packet.getValue() == 1) return;
-        }
-
         ev.setCancelled(true);
     }
 
