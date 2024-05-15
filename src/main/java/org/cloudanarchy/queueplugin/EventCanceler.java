@@ -3,16 +3,16 @@ package org.cloudanarchy.queueplugin;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.cloudanarchy.queueplugin.packetwrapper.PacketGameState;
-import org.cloudanarchy.queueplugin.packetwrapper.PacketPlayerInfo;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,15 +50,16 @@ public class EventCanceler extends PacketAdapter implements Listener {
         // this keeps the player from falling (flying ability)
         if (ev.getPacketType() == PacketType.Play.Server.ABILITIES) return;
 
-        // this keeps hacked clients from showing server as lagging
+        // this keeps clients from showing server as lagging
         if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) return;
 
         // if we dont send this, player has default skin lol
         if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
-            PacketPlayerInfo packet = new PacketPlayerInfo(ev.getPacket());
-            // send players only their own data? or don't send this packet at all...
-            if (packet.getData() != null)
-                packet.setData(packet.getData().stream().filter(data -> data.getProfile().getUUID().equals(ev.getPlayer().getUniqueId())).collect(Collectors.toList()));
+            for (List<PlayerInfoData> list : ev.getPacket().getPlayerInfoDataLists().getValues()) {
+                if (list == null) continue;
+                list.removeIf(data -> data != null &&
+                    !data.getProfile().getUUID().equals(ev.getPlayer().getUniqueId()));
+            }
             return;
         }
 
