@@ -42,6 +42,7 @@ public class EventCanceler extends PacketAdapter implements Listener {
         if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
         if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
         if (ev.getPacketType() == PacketType.Play.Server.POSITION) return;
+        if (ev.getPacketType() == PacketType.Play.Server.GAME_STATE_CHANGE) return;
 
         // for chat notifications
         if (ev.getPacketType() == PacketType.Play.Server.CHAT) return;
