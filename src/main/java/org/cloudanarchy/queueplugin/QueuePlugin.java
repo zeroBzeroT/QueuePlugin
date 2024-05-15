@@ -44,6 +44,9 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        getServer().setDefaultGameMode(GameMode.SPECTATOR);
+        getServer().setSpawnRadius(32);
+        getServer().getServerTickManager().setTickRate(1);
         getServer().getPluginManager().registerEvents(this, this);
         EventCanceler eventCanceler = new EventCanceler(this);
         getServer().getPluginManager().registerEvents(eventCanceler, this);
