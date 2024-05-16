@@ -19,14 +19,14 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         location = new Location(getServer().getWorlds().get(0), 0, 140, 0);
 
-        getServer().setDefaultGameMode(GameMode.SPECTATOR);
-        getServer().setSpawnRadius(32);
-        getServer().getServerTickManager().setTickRate(1);
         getServer().getPluginManager().registerEvents(this, this);
         EventCanceler eventCanceler = new EventCanceler(this);
         getServer().getPluginManager().registerEvents(eventCanceler, this);
         ProtocolLibrary.getProtocolManager().addPacketListener(eventCanceler);
 
+        // tick once per second
+        getServer().getServerTickManager().setTickRate(1);
+        // run once per tick
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (Player player : getServer().getOnlinePlayers()) {
                 // vanish
