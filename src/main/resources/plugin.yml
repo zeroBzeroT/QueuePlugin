@@ -1,6 +1,6 @@
 name: QueuePlugin
 version: @VERSION@
 description: Paper plugin to make a static queue world
-main: org.cloudanarchy.queueplugin.QueuePlugin
+main: org.zerobzerot.queueplugin.QueuePlugin
 api-version: 1.20
 depend: [ ProtocolLib ]

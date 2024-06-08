@@ -1,4 +1,4 @@
-package org.cloudanarchy.queueplugin;
+package org.zerobzerot.queueplugin;
 
 
 import com.comphenix.protocol.ProtocolLibrary;

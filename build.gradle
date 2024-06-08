@@ -3,8 +3,8 @@ plugins {
     id 'xyz.jpenilla.run-paper' version '2.3.0'
 }
 
-group = 'org.cloudanarchy'
 version = '2.1.0'
+group = 'org.zerobzerot'
 
 repositories {
     mavenCentral()
