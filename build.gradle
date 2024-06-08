@@ -63,7 +63,7 @@ tasks {
         dependsOn('build')
         systemProperty('com.mojang.eula.agree', 'true')
         downloadPlugins {
-            url("https://ci.dmulloy2.net/job/ProtocolLib/689/artifact/build/libs/ProtocolLib.jar")
+            url("https://ci.dmulloy2.net/job/ProtocolLib/709/artifact/build/libs/ProtocolLib.jar")
         }
     }
 }
