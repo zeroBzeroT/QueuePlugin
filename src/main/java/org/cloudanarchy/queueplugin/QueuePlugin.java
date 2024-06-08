@@ -8,63 +8,52 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.cloudanarchy.queueplugin.packetwrapper.PacketGameState;
-import org.jetbrains.annotations.NotNull;
 
 public final class QueuePlugin extends JavaPlugin implements Listener {
 
-    private static final PacketGameState creditScreenPacket = PacketGameState.creditScreenPacket();
-
-    private void process(@NotNull Player player) {
-        player.teleport(new Location(getServer().getWorlds().get(0), 0, 140, 0));
-        player.setAllowFlight(true);
-        player.setFlying(true);
-        player.setInvisible(true);
-        player.setInvulnerable(true);
-        player.setGameMode(GameMode.SPECTATOR);
-        for (Player p : getServer().getOnlinePlayers()) {
-            if (player.equals(p)) continue;
-            player.hidePlayer(this, p);
-            p.hidePlayer(this, player);
-        }
-        // win blockgame while some other players are in queue
-        if (getServer().getOnlinePlayers().size() < 4) return;
-        try {
-            creditScreenPacket.sendPacket(player);
-        } catch (RuntimeException ex) {
-            getLogger().warning("Unable to send fake packet: " + ex.getMessage());
-        }
-    }
+    private static Location location;
 
     @Override
     public void onEnable() {
+        location = new Location(getServer().getWorlds().get(0), 0, 140, 0);
+
         getServer().getPluginManager().registerEvents(this, this);
         EventCanceler eventCanceler = new EventCanceler(this);
         getServer().getPluginManager().registerEvents(eventCanceler, this);
         ProtocolLibrary.getProtocolManager().addPacketListener(eventCanceler);
+
+        // tick once per second
+        getServer().getServerTickManager().setTickRate(1);
+        // run once per tick
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            for (Player player : getServer().getOnlinePlayers()) {
+                // vanish
+                for (Player p : getServer().getOnlinePlayers()) {
+                    if (player.equals(p)) continue;
+                    player.hidePlayer(this, p);
+                    p.hidePlayer(this, player);
+                }
+                // properties
+                player.setGameMode(GameMode.SPECTATOR);
+                player.setAllowFlight(true);
+                player.setFlying(true);
+                player.setInvisible(true);
+                player.setInvulnerable(true);
+            }
+        }, 0, 0);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent ev) {
         ev.joinMessage(Component.empty());
-        process(ev.getPlayer());
+        ev.getPlayer().teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent ev) {
-        ev.setRespawnLocation(new Location(getServer().getWorlds().get(0), 0, 140, 0));
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                process(ev.getPlayer());
-            }
-        }.runTaskLater(this, 1);
+        ev.setRespawnLocation(location);
     }
 
     @EventHandler

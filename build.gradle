@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'xyz.jpenilla.run-paper' version '2.3.0'
+}
+
+group = 'org.cloudanarchy'
+version = '2.1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
+        content {
+            includeGroup 'io.papermc.paper'
+            includeGroup 'net.kyori'
+            includeGroup 'net.md-5'
+        }
+    }
+    maven {
+        // ProtocolLib
+        url = 'https://repo.dmulloy2.net/nexus/repository/public/'
+        content {
+            includeGroup 'com.comphenix.protocol'
+        }
+    }
+}
+
+dependencies {
+    // https://jd.papermc.io/paper/1.20/
+    compileOnly group: 'io.papermc.paper', name: 'paper-api', version: "${project.minecraft_version}-R0.1-SNAPSHOT"
+    // https://github.com/dmulloy2/ProtocolLib
+    compileOnly group: 'com.comphenix.protocol', name: 'ProtocolLib', version: "${project.protocollib_version}-SNAPSHOT"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+tasks.withType(JavaCompile).configureEach {
+    it.sourceCompatibility = it.targetCompatibility = JavaVersion.toVersion(17)
+    it.options.release = 17
+    it.options.encoding = 'UTF-8'
+}
+
+processResources {
+    filteringCharset "UTF-8"
+    filesMatching("plugin.yml") {
+        filter { line -> line.replace("@VERSION@", project.version) }
+    }
+}
+
+def artifactName(String type, String fileExt) {
+    return "${project.name.toLowerCase()}-${project.version}+${project.minecraft_version}-${type}.${fileExt}"
+}
+
+jar.archiveFileName.set(artifactName('paper', 'jar'))
+jar.destinationDirectory.set(layout.buildDirectory.dir('dist'))
+
+tasks {
+    runServer {
+        runDirectory = layout.projectDirectory.dir('run')
+        minecraftVersion(project.minecraft_version)
+        dependsOn('build')
+        systemProperty('com.mojang.eula.agree', 'true')
+        downloadPlugins {
+            url("https://ci.dmulloy2.net/job/ProtocolLib/689/artifact/build/libs/ProtocolLib.jar")
+        }
+    }
+}

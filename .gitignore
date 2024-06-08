@@ -1,31 +1,3 @@
-# ignore all files
-*
-# but include directories
-!*/
-
-# git
-!/**/.gitkeep
-!/.gitignore
-!/.gitmodules
-
-# java
-!/src/**
-
-# maven
-!/**/pom.xml
-
-# submodules
-!/convenience
-
-# runtime dependencies
-!/plugin-dependencies/**
-
-# misc
-!/.github/**
-!/.run/**
-!/*.md
-!/.editorconfig
-!/LICENSE
-
-# logo
-!/logo.jpg
+/.gradle/
+/build/
+/run/
