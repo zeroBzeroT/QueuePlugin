@@ -50,7 +50,7 @@ processResources {
 }
 
 def artifactName(String type, String fileExt) {
-    return "${project.name.toLowerCase()}-${project.version}+${project.minecraft_version}-${type}.${fileExt}"
+    return "${project.name}-${project.version}+${project.minecraft_version}-${type}.${fileExt}"
 }
 
 jar.archiveFileName.set(artifactName('paper', 'jar'))
