@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    // https://jd.papermc.io/paper/1.20/
+    // https://jd.papermc.io/paper/1.21/
     compileOnly group: 'io.papermc.paper', name: 'paper-api', version: "${project.minecraft_version}-R0.1-SNAPSHOT"
     // https://github.com/dmulloy2/ProtocolLib
     compileOnly group: 'com.comphenix.protocol', name: 'ProtocolLib', version: "${project.protocollib_version}-SNAPSHOT"

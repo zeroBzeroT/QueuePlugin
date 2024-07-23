@@ -12,10 +12,10 @@ Plugin for **Paper Minecraft Servers** to provide a static world for queue serve
 
 ## Versions
 
-| git                                                                   | version | mc     |
-|-----------------------------------------------------------------------|---------|--------|
-| [master](https://github.com/zeroBzeroT/QueueServerPlugin/tree/master) | 3.x.x   | 1.20.x |
-| [1.12.2](https://github.com/zeroBzeroT/QueueServerPlugin/tree/1.12.2) | 2.x.x   | 1.12.2 |
+| git                                                             | version | mc     |
+|-----------------------------------------------------------------|---------|--------|
+| [master](https://github.com/zeroBzeroT/QueuePlugin/tree/master) | 3.x.x   | 1.21.x |
+| [1.12.2](https://github.com/zeroBzeroT/QueuePlugin/tree/1.12.2) | 2.x.x   | 1.12.2 |
 
 ## Details
 
