@@ -60,8 +60,9 @@ tasks {
     runServer {
         runDirectory = layout.projectDirectory.dir('run')
         minecraftVersion(project.minecraft_version)
-        dependsOn('build')
         systemProperty('com.mojang.eula.agree', 'true')
+        systemProperty('Paper.skipServerPropertiesComments', 'true')
+        dependsOn('build')
         downloadPlugins {
             url("https://ci.dmulloy2.net/job/ProtocolLib/709/artifact/build/libs/ProtocolLib.jar")
         }
