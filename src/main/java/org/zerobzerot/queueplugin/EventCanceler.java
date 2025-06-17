@@ -3,12 +3,15 @@ package org.zerobzerot.queueplugin;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.google.common.collect.Lists;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
@@ -37,8 +40,7 @@ public class EventCanceler extends PacketAdapter implements Listener {
 
     @Override
     public void onPacketSending(PacketEvent ev) {
-
-        // these are needed or a notchian client will not join
+        // these are needed or a notch-ian client will not join
         if (ev.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) return;
         if (ev.getPacketType() == PacketType.Play.Server.LOGIN) return;
         if (ev.getPacketType() == PacketType.Play.Server.POSITION) return;
@@ -53,13 +55,23 @@ public class EventCanceler extends PacketAdapter implements Listener {
         // this keeps clients from showing server as lagging
         if (ev.getPacketType() == PacketType.Play.Server.UPDATE_TIME) return;
 
-        // if we dont send this, player has default skin lol
+        // if we don't send this, player has default skin lol
         if (ev.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
-            for (List<PlayerInfoData> list : ev.getPacket().getPlayerInfoDataLists().getValues()) {
-                if (list == null) continue;
-                list.removeIf(data -> data != null &&
-                    !data.getProfile().getUUID().equals(ev.getPlayer().getUniqueId()));
+            List<PlayerInfoData> newInfoData = Lists.newArrayList();
+
+            // only show the player in the tab-list
+            for (PlayerInfoData infoData : ev.getPacket().getPlayerInfoDataLists().read(1)) {
+                if (ev.getPlayer().getUniqueId() != infoData.getProfileId())
+                    continue;
+
+                newInfoData.add(new PlayerInfoData(
+                    infoData.getProfile(),
+                    infoData.getLatency(),
+                    EnumWrappers.NativeGameMode.SPECTATOR,
+                    infoData.getDisplayName()));
             }
+
+            ev.getPacket().getPlayerInfoDataLists().write(1, newInfoData);
             return;
         }
 
@@ -75,6 +87,11 @@ public class EventCanceler extends PacketAdapter implements Listener {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent ev) {
         ev.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onChunkSave(ChunkUnloadEvent ev) {
+        ev.setSaveChunk(false);
     }
 
 }

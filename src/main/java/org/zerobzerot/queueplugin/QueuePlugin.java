@@ -17,7 +17,8 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        location = new Location(getServer().getWorlds().get(0), 0, 140, 0);
+        // This should be the end, right?
+        location = new Location(getServer().getWorlds().getLast(), 0, 140, 0);
 
         getServer().getPluginManager().registerEvents(this, this);
         EventCanceler eventCanceler = new EventCanceler(this);
@@ -26,6 +27,7 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
 
         // tick once per second
         getServer().getServerTickManager().setTickRate(1);
+
         // run once per tick
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (Player player : getServer().getOnlinePlayers()) {
@@ -35,6 +37,7 @@ public final class QueuePlugin extends JavaPlugin implements Listener {
                     player.hidePlayer(this, p);
                     p.hidePlayer(this, player);
                 }
+
                 // properties
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setAllowFlight(true);
