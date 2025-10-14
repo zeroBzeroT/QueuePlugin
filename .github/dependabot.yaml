@@ -7,7 +7,6 @@ updates:
       interval: "daily"
     assignees:
       - "bierdosenhalter"
-      - "nothub"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -15,4 +14,3 @@ updates:
       interval: "daily"
     assignees:
       - "bierdosenhalter"
-      - "nothub"
